@@ -3,14 +3,14 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { extname } from 'path';
 import { diskStorage } from 'multer';
 
-
 // todo in config steken
 export const fileOptions = {
-  dest: process.env.UPLOAD_LOCATION,
+  dest: '../../../uploads',
+  // dest: process.env.UPLOAD_LOCATION,
 
   // Enable file size limits
   limits: {
-    fileSize: +process.env.MAX_FILE_SIZE,
+    fileSize: (1000000), // max 1 MB
   },
 
   // Check the mimetypes to allow for upload
