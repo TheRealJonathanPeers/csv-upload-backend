@@ -29,7 +29,8 @@
     "rimraf": "^2.6.2",
     "rxjs": "^6.3.3",
     "swagger-ui-express": "^4.1.1",
-    "uuid": "latest"
+    "uuid": "latest",
+    "csvtojson": "latest"
   },
   "devDependencies": {
     "@nestjs/testing": "^6.0.0",

@@ -3,14 +3,15 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { extname } from 'path';
 import { diskStorage } from 'multer';
 
+export const fileConfig = {
+  uploadDir: './uploads',
+};
+
 // todo in config steken
 export const fileOptions = {
-  dest: '../../../uploads',
-  // dest: process.env.UPLOAD_LOCATION,
-
   // Enable file size limits
   limits: {
-    fileSize: (1000000), // max 1 MB
+    fileSize: 1000000, // max 1 MB
   },
 
   // Check the mimetypes to allow for upload
@@ -22,22 +23,19 @@ export const fileOptions = {
 
   // Storage properties
   storage: diskStorage({
-
     // Destination storage path details
     destination: (req: any, file: any, cb: any) => {
-      const uploadPath = this.dest; // todo: test if this works, reference to var in this obj
-
       // Create folder if doesn't exist
-      if (!existsSync(uploadPath)) {
-        mkdirSync(uploadPath);
+      if (!existsSync(fileConfig.uploadDir)) {
+        mkdirSync(fileConfig.uploadDir);
       }
-      cb(null, uploadPath);
+      cb(null, fileConfig.uploadDir);
     },
 
     // File modification details
     filename: (req: any, file: any, cb: any) => {
-      // Calling the callback passing the random name generated with the original extension name
-      cb(null, `${Date.now().toString()}-${extname(file.originalname)}`);
+      // Calling the callback passing the random name appended to the original extension name
+      cb(null, `${Date.now().toString()}.${extname(file.originalname)}`);
     },
   }),
 

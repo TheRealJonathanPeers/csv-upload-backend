@@ -9,4 +9,5 @@ import { FileService } from './files/service/file.service';
   controllers: [AppController, FilesController],
   providers: [AppService, FileService],
 })
-export class AppModule {}
+export class AppModule {
+}

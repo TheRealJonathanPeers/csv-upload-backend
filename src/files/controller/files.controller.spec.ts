@@ -16,3 +16,11 @@ describe('Files Controller', () => {
     expect(controller).toBeDefined();
   });
 });
+
+// quotes, escaping, encoding, etc...
+// filesize
+// filetype/extension
+// correct directory --> amount of files before, amount of files after
+// filename
+
+// error handling
