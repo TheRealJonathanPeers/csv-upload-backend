@@ -14,9 +14,9 @@ export class FileService {
 
   /**
    * @method saveFile will save a file coming from the Controller
-   * @param file is the file that needs to be saved
+   * @param file is the file that has been saved and now needs to be parsed to json
    *
-   * @returns if successful: Promise<File[]>, else Error;
+   * @returns array of json objects in the form of a Promise<any[]> type
    */
   async saveFile(file): Promise<any[]> {
     // the file is already uploaded automatically by this point

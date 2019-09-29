@@ -36,7 +36,6 @@ export class FileController {
   @UseInterceptors(FileInterceptor('file', fileOptions))
   async uploadFile(@UploadedFile() file): Promise<any[]> {
     console.log(file);
-
     return await this.fs.saveFile(file);
   }
 
