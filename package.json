@@ -24,13 +24,15 @@
     "@nestjs/core": "^6.0.0",
     "@nestjs/platform-express": "^6.0.0",
     "@nestjs/swagger": "^3.1.0",
+    "csvtojson": "latest",
+    "iconv": "latest",
+    "iconv-lite": "^0.5.0",
     "multer": "latest",
     "reflect-metadata": "^0.1.12",
     "rimraf": "^2.6.2",
     "rxjs": "^6.3.3",
     "swagger-ui-express": "^4.1.1",
-    "uuid": "latest",
-    "csvtojson": "latest"
+    "uuid": "latest"
   },
   "devDependencies": {
     "@nestjs/testing": "^6.0.0",
@@ -57,7 +59,7 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": "test",
     "testRegex": ".spec.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"

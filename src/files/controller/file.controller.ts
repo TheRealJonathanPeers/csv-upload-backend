@@ -4,12 +4,12 @@ import { fileOptions } from '../config/file-config';
 import { FileService } from '../service/file.service';
 
 /**
- * @class FilesController handles incoming requests related to files
+ * @class FileController handles incoming requests related to files
  *
  * @author Jonathan Peers
  */
-@Controller('files')
-export class FilesController {
+@Controller('file')
+export class FileController {
 
   constructor(private fs: FileService) {
   }
@@ -21,7 +21,7 @@ export class FilesController {
    */
   @Get()
   async getAllCSVFiles(): Promise<any[][]> {
-    return (await this.fs.readAllCSVFiles());
+    return await this.fs.readAllCSVFiles();
   }
 
   /**
@@ -36,6 +36,7 @@ export class FilesController {
   @UseInterceptors(FileInterceptor('file', fileOptions))
   async uploadFile(@UploadedFile() file): Promise<any[]> {
     console.log(file);
+
     return await this.fs.saveFile(file);
   }
 

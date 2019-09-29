@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import { fileConfig } from '../config/file-config';
+import { detectBufferEncoding } from 'tslint/lib/utils';
 import csv = require('csvtojson');
 
 /**
@@ -28,6 +29,7 @@ export class FileService {
    */
   async readAllCSVFiles(): Promise<any[][]> {
     const allFiles = await fs.readdirSync(fileConfig.uploadDir);
+
     const parsedFiles = await allFiles.map(
       async fileName => await this.parseCSVFile(fileName), // convert to json
     );
@@ -43,15 +45,20 @@ export class FileService {
    */
   private async parseCSVFile(fileName: string): Promise<any[]> {
     const fileLocation = `${fileConfig.uploadDir}/${fileName}`;
-    return await csv({
-      delimiter: 'auto', // parses , or ; automatically
-      escape: '\\',
+    const fileEncoding = detectBufferEncoding(fs.readFileSync(fileLocation));
+    console.log('encoding of file: ' + fileEncoding);
 
-    }).fromFile(fileLocation)
+    return await csv({
+      delimiter: 'auto', // parses ',' or ';' automatically
+    })
+      .fromFile(fileLocation, {
+        encoding: fileEncoding, // parser will take the file encoding into account
+      })
       .on(
         'error', err => console.log(`[fileService]: error while parsing csv to json: ${err}`),
       );
   }
+
 }
 
 // quotes, escaping, encoding, etc...)

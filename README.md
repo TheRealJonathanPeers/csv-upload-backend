@@ -19,10 +19,6 @@ $ npm install
 $ npm i --save csvtojson 
 ```
 
-
-
-
-
 ## Running the app
 
 ```bash
