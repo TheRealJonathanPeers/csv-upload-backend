@@ -3,41 +3,47 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { extname } from 'path';
 import { diskStorage } from 'multer';
 
-// todo in config steken
+export const fileConfig = {
+  uploadDir: './uploads',
+};
+
 export const fileOptions = {
-  dest: '../../../uploads',
-  // dest: process.env.UPLOAD_LOCATION,
-
-  // Enable file size limits
+  // file size limits
   limits: {
-    fileSize: (1000000), // max 1 MB
+    fileSize: 1000000, // max 1 MB
   },
 
-  // Check the mimetypes to allow for upload
+  // mimetypes && encoding types that are allowed to be uploaded
   fileFilter: (req: any, file: any, cb: any) => {
+    let correctEncoding = false;
+    let correctMimeType = false;
+
     file.mimetype.match(/\/(csv)$/) ?
-      cb(null, true) :
+      correctMimeType = true :
       cb(new HttpException(`Unsupported file type ${extname(file.originalname)}`, HttpStatus.BAD_REQUEST), false);
+
+    file.encoding.match(/(7bit)/) ?
+      correctEncoding = true :
+      cb(new HttpException(`Unsupported encoding type ${file.encoding}`, HttpStatus.BAD_REQUEST), false);
+
+    if (correctEncoding && correctMimeType) {
+      cb(null, true);
+    }
+
   },
 
-  // Storage properties
   storage: diskStorage({
-
-    // Destination storage path details
     destination: (req: any, file: any, cb: any) => {
-      const uploadPath = this.dest; // todo: test if this works, reference to var in this obj
-
-      // Create folder if doesn't exist
-      if (!existsSync(uploadPath)) {
-        mkdirSync(uploadPath);
+      if (!existsSync(fileConfig.uploadDir)) { // Create directory if doesn't exist
+        mkdirSync(fileConfig.uploadDir);
       }
-      cb(null, uploadPath);
+      cb(null, fileConfig.uploadDir); // directory to store files
     },
 
-    // File modification details
+    // custom filename
     filename: (req: any, file: any, cb: any) => {
-      // Calling the callback passing the random name generated with the original extension name
-      cb(null, `${Date.now().toString()}-${extname(file.originalname)}`);
+      const name = `${new Date(Date.now()).toLocaleString()}${extname(file.originalname)}`;
+      cb(null, `${name}`);
     },
   }),
 

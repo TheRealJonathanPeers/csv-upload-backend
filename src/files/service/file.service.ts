@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
-import { fileOptions } from '../config/file-config';
+import { fileConfig } from '../config/file-config';
+import { detectBufferEncoding } from 'tslint/lib/utils';
+import csv = require('csvtojson');
 
 /**
  * @class FileService handles all file related functionality
@@ -15,30 +17,50 @@ export class FileService {
    * @param file is the file that needs to be saved
    *
    * @returns if successful: Promise<File[]>, else Error;
-   *
-   * @author Jonathan Peers
    */
-  async saveFile(file: File): Promise<string> {
-    // console.log(JSON.stringify(file));
-    // return new Promise(() => {
-    //   fs.readdir();
-    // });
-    return new Promise(() => '');
+  async saveFile(file): Promise<any[]> {
+    // the file is already uploaded automatically by this point
+    // so we can start parsing it to json
+    return await this.parseCSVFile(file.filename);
   }
 
   /**
-   * @method readFiles reads all files from a certain directory where the files are saved
+   * @method readFiles reads all csv files from a certain directory where they are saved and converts it to json
    *
-   * @returns if successful: Promise<File[]>, else Error;
-   *
-   * @author Jonathan Peers
+   * @returns 2D array of json objects in the form of a Promise<any[][]> type
    */
-  async readFiles(): Promise<[]> {
-    // reads all the present filenames in the given dir and converts them to json
-    fs.readdirSync(fileOptions.dest).forEach(file => {
-      console.log(file);
-    });
+  async readAllCSVFiles(): Promise<any[][]> {
+    const allFiles = await fs.readdirSync(fileConfig.uploadDir);
 
-    return new Promise(() => []);
+    const parsedFiles = await allFiles.map(
+      async fileName => await this.parseCSVFile(fileName), // convert to json
+    );
+
+    return Promise.all(parsedFiles);
   }
+
+  /**
+   * @method parseCSVFile will parse the csv file based on the given filepath
+   * @param fileName is the name of the file which will be appended to path of the csv files
+   *
+   * @returns array of json objects in the form of a Promise<any[]> type
+   */
+  private async parseCSVFile(fileName: string): Promise<any[]> {
+    const fileLocation = `${fileConfig.uploadDir}/${fileName}`;
+    const fileEncoding = detectBufferEncoding(fs.readFileSync(fileLocation));
+    // console.log('encoding of file: ' + fileEncoding);
+
+    return await csv({
+      delimiter: 'auto', // parses ',' or ';' automatically
+    })
+      .fromFile(fileLocation, {
+        encoding: fileEncoding, // parser will take the file encoding into account
+      })
+      .on(
+        'error', err => console.log(`[fileService]: error while parsing csv to json: ${err}`),
+      );
+  }
+
 }
+
+// quotes, escaping, encoding, etc...)
