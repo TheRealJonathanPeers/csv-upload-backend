@@ -19,6 +19,8 @@ export class FileService {
    * @returns if successful: Promise<File[]>, else Error;
    */
   async saveFile(file): Promise<any[]> {
+    // the file is already uploaded automatically by this point
+    // so we can start parsing it to json
     return await this.parseCSVFile(file.filename);
   }
 
@@ -46,7 +48,7 @@ export class FileService {
   private async parseCSVFile(fileName: string): Promise<any[]> {
     const fileLocation = `${fileConfig.uploadDir}/${fileName}`;
     const fileEncoding = detectBufferEncoding(fs.readFileSync(fileLocation));
-    console.log('encoding of file: ' + fileEncoding);
+    // console.log('encoding of file: ' + fileEncoding);
 
     return await csv({
       delimiter: 'auto', // parses ',' or ';' automatically
