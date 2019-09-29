@@ -60,7 +60,4 @@ export class FileService {
         'error', err => console.log(`[fileService]: error while parsing csv to json: ${err}`),
       );
   }
-
 }
-
-// quotes, escaping, encoding, etc...)
